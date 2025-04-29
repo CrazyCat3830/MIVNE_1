@@ -1,9 +1,8 @@
-#username - complete info
-#id1      - complete info 
-#name1    - complete info 
+#username - dannyl
+#id1      - 217416866
+#name1    - Dany Liberman
 #id2      - complete info
-#name2    - complete info  
-
+#name2    - complete info
 
 
 """A class represnting a node in an AVL tree"""
