@@ -1,7 +1,7 @@
 #username - dannyl
 #id1      - 217416866
 #name1    - Dany Liberman
-#id2     - 332090224
+#id2      - 332090224
 #name2    - Liam Ichai
 
 
@@ -48,6 +48,7 @@ class AVLTree(object):
 	"""
 	def __init__(self):
 		self.root = None
+		self.size = 0
 
 
 	"""searches for a node in the dictionary corresponding to the key
@@ -59,10 +60,9 @@ class AVLTree(object):
 	"""
 	def search(self, key):
 		temp = self.root
-		while temp != None:
+		while temp is not None:
 			if temp.key == key:
 				return temp
-
 			if temp.key < key:
 				temp = temp.right
 			else:
@@ -82,6 +82,7 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, key, val, start="root"):
+		self.size += 1
 		return -1
 
 
@@ -93,6 +94,7 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def delete(self, node):
+		self.size -= 1
 		return -1
 
 
@@ -111,7 +113,7 @@ class AVLTree(object):
 	@returns: the number of items in dictionary 
 	"""
 	def size(self):
-		return -1	
+		return self.size
 
 
 	"""returns the root of the tree representing the dictionary
@@ -120,7 +122,10 @@ class AVLTree(object):
 	@returns: the root, None if the dictionary is empty
 	"""
 	def get_root(self):
-		return None
+		if self.root is None:
+			return None
+		temp = self.root
+		return temp
 
 
     """gets amir's suggestion of balance factor
@@ -128,4 +133,14 @@ class AVLTree(object):
 	@returns: the number of nodes which have balance factor equals to 0 devided by the total number of nodes
 	"""
 	def get_amir_balance_factor(self):
+		count_bf_zero = 0
+		if get_balance_factor(self) == 0:
+			count_bf_zero = count_bf_zero + 1 # TODO
 		return None
+
+
+	def get_balance_factor(self) -> int:
+		left_height = self.left.height if self.left else 0
+		right_height = self.right.height if self.right else 0
+		return left_height - right_height
+
