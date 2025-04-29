@@ -2,7 +2,7 @@
 #id1      - 217416866
 #name1    - Dany Liberman
 #id2      - complete info
-#name2    - complete info
+#name2    - complete info1
 
 
 """A class represnting a node in an AVL tree"""
