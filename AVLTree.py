@@ -1,11 +1,13 @@
 #username - dannyl
 #id1      - 217416866
 #name1    - Dany Liberman
-#332090224     - complete info
-#name2    - complete info
+#id2     - 332090224
+#name2    - Liam Ichai
 
 
 """A class represnting a node in an AVL tree"""
+from re import search
+
 
 class AVLNode(object):
 	"""Constructor, you are allowed to add more fields. 
@@ -56,6 +58,15 @@ class AVLTree(object):
 	@returns: node corresponding to key
 	"""
 	def search(self, key):
+		temp = self.root
+		while temp != None:
+			if temp.key == key:
+				return temp
+
+			if temp.key < key:
+				temp = temp.right
+			else:
+				temp = temp.left
 		return None
 
 
