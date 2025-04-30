@@ -128,13 +128,13 @@ class AVLTree(object):
 		return temp
 
 
-    """gets amir's suggestion of balance factor
+	"""gets amir's suggestion of balance factor
 
 	@returns: the number of nodes which have balance factor equals to 0 devided by the total number of nodes
 	"""
 	def get_amir_balance_factor(self):
 		count_bf_zero = 0
-		if get_balance_factor(self) == 0:
+		if self.get_balance_factor() == 0:
 			count_bf_zero = count_bf_zero + 1 # TODO
 		return None
 
