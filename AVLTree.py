@@ -82,7 +82,7 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, key, val, start="root"):
-		self.size += 1
+		#self.size += 1
 		return -1
 
 
@@ -94,7 +94,7 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def delete(self, node):
-		self.size -= 1
+		#self.size -= 1
 		return -1
 
 
