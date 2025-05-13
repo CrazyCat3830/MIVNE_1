@@ -24,7 +24,6 @@ class AVLNode(object):
 		self.right = None
 		self.parent = None
 		self.height = -1
-		
 
 	"""returns whether self is not a virtual node 
 
@@ -32,7 +31,7 @@ class AVLNode(object):
 	@returns: False if self is a virtual node, True otherwise.
 	"""
 	def is_real_node(self):
-		return False
+		return not self.height == -1
 
 
 
@@ -49,7 +48,6 @@ class AVLTree(object):
 	def __init__(self):
 		self.root = None
 		self.size = 0
-
 
 	"""searches for a node in the dictionary corresponding to the key
 
@@ -77,14 +75,47 @@ class AVLTree(object):
 	@param key: key of item that is to be inserted to self
 	@type val: string
 	@param val: the value of the item
-    @param start: can be either "root" or "max"
+	@param start: can be either "root" or "max"
 	@rtype: int
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, key, val, start="root"):
-		#self.size += 1
-		return -1
+		count = 0
+		if self.search(val) is not None:
+			return count
+		parent = None
+		if start == "root":
+			# search
+			temp = self.root
+			while temp is not None:
+				if temp.key < key:
+					temp = temp.right
+				else:
+					temp = temp.left
+			# insert
+			temp, parent = self.add_new_node(temp, key, val)
 
+		if start == "max":
+			pass
+
+		#  temp.parent = temp.height + 1
+		while parent.is_real_node():
+			bf = parent.left.height - parent.right.height
+			pass
+		return count
+
+
+	def add_new_node(self, temp, key, val):
+		parent = temp.parent
+		new_node = AVLNode(key, val)
+		if parent.key > key:
+			parent.left = new_node
+		else:
+			parent.right = new_node
+		new_node.parent = parent
+		new_node.left = AVLNode(None, None)
+		new_node.right = AVLNode(None, None)
+		return (new_node, parent)
 
 	"""deletes node from the dictionary
 
@@ -96,7 +127,6 @@ class AVLTree(object):
 	def delete(self, node):
 		#self.size -= 1
 		return -1
-
 
 	"""returns an array representing dictionary 
 
@@ -124,9 +154,7 @@ class AVLTree(object):
 	def get_root(self):
 		if self.root is None:
 			return None
-		temp = self.root
-		return temp
-
+		return self.root
 
 	"""gets amir's suggestion of balance factor
 
