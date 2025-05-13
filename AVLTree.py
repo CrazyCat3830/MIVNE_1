@@ -99,8 +99,10 @@ class AVLTree(object):
 			pass
 
 		temp_height = temp
+		height_counter = 0
 		while temp_height is not None:
-			temp_height.height += 1
+			height_counter += 1
+			temp_height.height = max(temp_height.height, height_counter)
 			temp_height = temp_height.parent
 
 		while parent.is_real_node():
