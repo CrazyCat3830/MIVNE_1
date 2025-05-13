@@ -1,11 +1,11 @@
-#username - dannyl
-#id1      - 217416866
-#name1    - Dany Liberman
-#id2      - 332090224
-#name2    - Liam Ichai
+# username - dannyl
+# id1      - 217416866
+# name1    - Dany Liberman
+# id2      - 332090224
+# name2    - Liam Ichai
 
 
-"""A class represnting a node in an AVL tree"""
+"""A class representing a node in an AVL tree"""
 from re import search
 
 
@@ -140,7 +140,6 @@ class AVLTree(object):
 	def avl_to_array(self):
 		return None
 
-
 	"""returns the number of items in dictionary 
 
 	@rtype: int
@@ -148,7 +147,6 @@ class AVLTree(object):
 	"""
 	def size(self):
 		return self.size
-
 
 	"""returns the root of the tree representing the dictionary
 
@@ -167,12 +165,11 @@ class AVLTree(object):
 	def get_amir_balance_factor(self):
 		count_bf_zero = 0
 		if self.get_balance_factor() == 0:
-			count_bf_zero = count_bf_zero + 1 # TODO
+			count_bf_zero = count_bf_zero + 1  # TODO
 		return None
 
-
 	def get_balance_factor(self) -> int:
-		left_height = self.left.height if self.left else 0
-		right_height = self.right.height if self.right else 0
+		left_height = self.root.left.height if self.left else 0
+		right_height = self.root.right.height if self.right else 0
 		return left_height - right_height
 
