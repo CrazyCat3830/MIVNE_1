@@ -138,6 +138,78 @@ class AVLTree(object):
 		#self.size -= 1
 		return -1
 
+	def BST_delete(self, node):
+		is_right_son = False
+		if node.parent is not None:
+			is_right_son = (node.parent.right == node)
+		# Case 1: no children
+		if not node.right.is_real_node() and not node.left.is_real_node():
+			replacement = AVLNode(None, None)
+			replacement.parent = node.parent
+			if node.parent is None:
+				self.root = replacement
+			elif is_right_son:
+				node.parent.right = replacement
+			else:
+				node.parent.left = replacement
+		# Case 2a: only right child
+		elif node.right.is_real_node() and not node.left.is_real_node():
+			if node.parent is None:
+				self.root = node.right
+			elif is_right_son:
+				node.parent.right = node.right
+			else:
+				node.parent.left = node.right
+			node.right.parent = node.parent
+		# Case 2b: only left child
+		elif not node.right.is_real_node() and node.left.is_real_node():
+			if node.parent is None:
+				self.root = node.left
+			elif is_right_son:
+				node.parent.right = node.left
+			else:
+				node.parent.left = node.left
+			node.left.parent = node.parent
+		# Case 3: two children
+		else:
+			succ = self.successor(node)
+			succ_parent = succ.parent
+			succ_right_child = succ.right
+			# Remove successor from its original position
+			if succ_parent.left == succ:
+				succ_parent.left = succ_right_child
+			else:
+				succ_parent.right = succ_right_child
+			if succ_right_child.is_real_node():
+				succ_right_child.parent = succ_parent
+			# Move successor to node's position
+			if node.parent is None:
+				self.root = succ
+			elif is_right_son:
+				node.parent.right = succ
+			else:
+				node.parent.left = succ
+			succ.parent = node.parent
+			# 
+			succ.left = node.left
+			node.left.parent = succ
+			succ.right = node.right
+			node.right.parent = succ
+
+	def successor(self, node):
+		if node.right.is_real_node():
+			return self.min(node.right)
+		parent = node.parent
+		while parent.is_real_node() and node == parent.right:
+			node = parent
+			parent = parent.parent
+		return parent if parent.is_real_node() else None
+
+	def min(self, node):
+		temp = node
+		while temp.left.is_real_node():
+			temp = temp.left
+		return temp
 	"""returns an array representing dictionary 
 
 	@rtype: list
