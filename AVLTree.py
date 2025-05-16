@@ -24,6 +24,7 @@ class AVLNode(object):
 		self.right = None
 		self.parent = None
 		self.height = -1
+		self.bf = 0
 
 	"""returns whether self is not a virtual node 
 
@@ -100,14 +101,17 @@ class AVLTree(object):
 
 		temp_height = temp
 		height_counter = 0
+		#compute height and bf for every parent above the inserted node
 		while temp_height is not None:
 			height_counter += 1
 			temp_height.height = max(temp_height.height, height_counter)
+			temp_height.bf = temp_height.left.height - temp_height.right.height
 			temp_height = temp_height.parent
 
-		while parent.is_real_node():
-			bf = parent.left.height - parent.right.height
-			pass
+
+		while parent != None:
+			if abs(parent.bf) < 2 and parent:
+				return 0
 		return count
 
 
