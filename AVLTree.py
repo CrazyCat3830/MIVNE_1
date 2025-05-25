@@ -109,9 +109,95 @@ class AVLTree(object):
 			temp_height = temp_height.parent
 
 
-		while parent != None:
-			if abs(parent.bf) < 2 and parent:
-				return 0
+
+
+		#if the parent of the parent is real, and his bf is2 or -2, rotate!
+		#if there's no parent of parent, don't worry it's cool
+		if parent.parent != None:
+			if parent.parent.left.height - parent.parent.right.height == 2:
+				#what is the bf of the left son?
+				leftBf = parent.parent.left.left.height - parent.parent.left.right.height
+				#do right rotation
+				if leftBf == 1:
+					parent.right = parent.parent
+					parent.parent.left = AVLNode(None, None)
+					if parent.parent.parent != None:
+						rootPerant = parent.parent.parent
+						if rootPerant.left == parent.parent:
+							rootPerant.left = parent
+						else:
+							rootPerant.right = parent
+						parent.parent = rootPerant
+					#if parent.parent.parent == None then the parent.parent is the root and we should update the root
+					else:
+						parent.parent == None
+						self.root = parent
+					parent.right.parent = parent
+					return 1
+
+				#do left then right rotation
+				if leftBf == -1:
+					temp.right = parent.parent
+					temp.left = parent
+					parent.parent.left = AVLNode(None, None)
+					parent.right = AVLNode(None, None)
+					if parent.parent.parent != None:
+						rootPerant = parent.parent.parent
+						if rootPerant.left == parent.parent:
+							rootPerant.left = temp
+						else:
+							rootPerant.right = temp
+						temp.parent = rootPerant
+					# if parent.parent.parent == None then the parent.parent is the root and we should update the root
+					else:
+						temp.parent == None
+						self.root = temp
+					temp.right.parent = temp
+					temp.left.parent = temp
+					return 2
+
+			if parent.parent.left.height - parent.parent.right.height == -2:
+				# what is the bf of the right son?
+				rightBf = parent.parent.right.left.height - parent.parent.right.right.height
+				# do right then left rotation
+				if rightBf == 1:
+					temp.right = parent
+					temp.left = parent.parent
+					parent.parent.right = AVLNode(None, None)
+					parent.left = AVLNode(None, None)
+					if parent.parent.parent != None:
+						rootPerant = parent.parent.parent
+						if rootPerant.left == parent.parent:
+							rootPerant.left = temp
+						else:
+							rootPerant.right = temp
+						temp.parent = rootPerant
+					# if parent.parent.parent == None then the parent.parent is the root and we should update the root
+					else:
+						temp.parent == None
+						self.root = temp
+					temp.right.parent = temp
+					temp.left.parent = temp
+					return 2
+
+				# do left rotation
+				if rightBf == -1:
+					parent.left = parent.parent
+					parent.parent.right = AVLNode(None, None)
+					if parent.parent.parent != None:
+						rootPerant = parent.parent.parent
+						if rootPerant.left == parent.parent:
+							rootPerant.left = parent
+						else:
+							rootPerant.right = parent
+						parent.parent = rootPerant
+					# if parent.parent.parent == None then the parent.parent is the root and we should update the root
+					else:
+						parent.parent == None
+						self.root = parent
+					parent.left.parent = parent
+					return 1
+
 		return count
 
 
