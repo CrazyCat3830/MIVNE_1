@@ -18,7 +18,6 @@ class SimpleAVLTester(unittest.TestCase):
         self.tree.insert(10, "ten")
         self.tree.insert(20, "twenty")
         self.tree.insert(5, "five")
-
         self.assertEqual(self.tree.search(10).value, "ten", "FAIL - Search for key 10 failed")
         self.assertEqual(self.tree.search(20).value, "twenty", "FAIL - Search for key 20 failed")
         self.assertEqual(self.tree.search(5).value, "five", "FAIL - Search for key 5 failed")
@@ -29,7 +28,6 @@ class SimpleAVLTester(unittest.TestCase):
         self.tree.insert(10, "ten")
         self.tree.insert(20, "twenty")
         self.tree.insert(5, "five")
-
         self.tree.delete(self.tree.search(10))
         self.assertIsNone(self.tree.search(10), "FAIL - Key 10 should be deleted")
         self.assertIsNotNone(self.tree.search(20), "FAIL - Key 20 should still exist")

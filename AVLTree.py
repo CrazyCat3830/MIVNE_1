@@ -59,7 +59,9 @@ class AVLTree(object):
 	"""
 	def search(self, key):
 		temp = self.root
-		while temp is not None:
+		if temp is None:
+			return None
+		while temp.is_real_node():
 			if temp.key == key:
 				return temp
 			if temp.key < key:
@@ -80,7 +82,10 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, key, val, start="root"):
-		count = 0
+		# if the key already exists in the tree, do nothing
+		if self.search(key) is not None:
+			return 0
+		self.size = self.size + 1
 		# if tree is empty
 		if self.root is None:
 			self.root = AVLNode(key, val)
@@ -92,9 +97,6 @@ class AVLTree(object):
 			self.root.left = left_child
 			self.root.right = right_child
 			return 0
-		# if the key already exists in the tree, do nothing
-		if self.search(val) is not None:
-			return 0
 		temp = None
 		parent = None
 		# if the key doesn't exist already, insert it in the desired way
@@ -103,94 +105,29 @@ class AVLTree(object):
 		elif start == "max":
 			temp, parent = self.max_insert(key, val)
 		# fix the avl tree
-		#if the parent of the parent is real, and his bf is2 or -2, rotate!
-		#if there's no parent of parent, don't worry it's cool
-		if parent.parent != None:
-			if parent.parent.left.height - parent.parent.right.height == 2:
-				#what is the bf of the left son?
-				leftBf = parent.parent.left.left.height - parent.parent.left.right.height
-				#do right rotation
-				if leftBf == 1:
-					parent.right = parent.parent
-					parent.parent.left = AVLNode(None, None)
-					if parent.parent.parent != None:
-						rootPerant = parent.parent.parent
-						if rootPerant.left == parent.parent:
-							rootPerant.left = parent
-						else:
-							rootPerant.right = parent
-						parent.parent = rootPerant
-					#if parent.parent.parent == None then the parent.parent is the root and we should update the root
-					else:
-						parent.parent == None
-						self.root = parent
-					parent.right.parent = parent
+		child = None
+		while temp is not None:
+			bf = self.get_balance_factor(temp)
+			child = temp.left if bf > 0 else temp.right
+			child_bf = self.get_balance_factor(child)
+			if bf == 2:
+				if child_bf >= 0:
+					self.right_rotation(temp)     # LL case
 					return 1
-
-				#do left then right rotation
-				if leftBf == -1:
-					temp.right = parent.parent
-					temp.left = parent
-					parent.parent.left = AVLNode(None, None)
-					parent.right = AVLNode(None, None)
-					if parent.parent.parent != None:
-						rootPerant = parent.parent.parent
-						if rootPerant.left == parent.parent:
-							rootPerant.left = temp
-						else:
-							rootPerant.right = temp
-						temp.parent = rootPerant
-					# if parent.parent.parent == None then the parent.parent is the root and we should update the root
-					else:
-						temp.parent == None
-						self.root = temp
-					temp.right.parent = temp
-					temp.left.parent = temp
+				else:
+					temp.left = self.left_rotation(child)  # LR step 1
+					self.right_rotation(temp)       # LR step 2
 					return 2
-
-			if parent.parent.left.height - parent.parent.right.height == -2:
-				# what is the bf of the right son?
-				rightBf = parent.parent.right.left.height - parent.parent.right.right.height
-				# do right then left rotation
-				if rightBf == 1:
-					temp.right = parent
-					temp.left = parent.parent
-					parent.parent.right = AVLNode(None, None)
-					parent.left = AVLNode(None, None)
-					if parent.parent.parent != None:
-						rootPerant = parent.parent.parent
-						if rootPerant.left == parent.parent:
-							rootPerant.left = temp
-						else:
-							rootPerant.right = temp
-						temp.parent = rootPerant
-					# if parent.parent.parent == None then the parent.parent is the root and we should update the root
-					else:
-						temp.parent == None
-						self.root = temp
-					temp.right.parent = temp
-					temp.left.parent = temp
-					return 2
-
-				# do left rotation
-				if rightBf == -1:
-					parent.left = parent.parent
-					parent.parent.right = AVLNode(None, None)
-					if parent.parent.parent != None:
-						rootPerant = parent.parent.parent
-						if rootPerant.left == parent.parent:
-							rootPerant.left = parent
-						else:
-							rootPerant.right = parent
-						parent.parent = rootPerant
-					# if parent.parent.parent == None then the parent.parent is the root and we should update the root
-					else:
-						parent.parent == None
-						self.root = parent
-					parent.left.parent = parent
+			elif bf == -2:
+				if child_bf <= 0:
+					self.left_rotation(temp)      # RR case
 					return 1
-
-		return count
+				else:
+					temp.right = self.right_rotation(child)  # RL step 1
+					self.left_rotation(temp)          # RL step 2
+					return 2
+			temp = temp.parent
+		return 0
 
 	def add_new_node(self, temp, key, val):
 		parent = temp.parent
@@ -236,35 +173,51 @@ class AVLTree(object):
 		# seach
 		temp = self. max
 		while temp.is_real_node():
-			pass
+			pass  # TODO
 		# insert
 		temp, parent = self.add_new_node(temp, key, val)
 		return temp, parent
 
-	#x is the bf criminal, y is the root replacement. returns the new root of the changed suntree
-	def right_rotation(self, x, y):
+	# x is the unbalanced node (bf = +2), y is the new root of the rotated subtree
+	def right_rotation(self, x):
+		y = x.left
 		x.left = y.right
-		x.left.parent = x
+		if y.right:
+			y.right.parent = x
 		y.right = x
+		# Reconnect y to x's parent
 		y.parent = x.parent
-		y.parent.left = y
-		y.parent.right = y
+		if x.parent:
+			if x.parent.left == x:
+				x.parent.left = y
+			else:
+				x.parent.right = y
+		else:
+			self.root = y  # update root if x was the root
 		x.parent = y
+		# Fix heights from bottom up
+		self.fix_height(x)
+		self.fix_height(y)
 		return y
 
-	#x is the bf criminal, y is the root replacement
-	def left_rotation(self, x, y):
+	def left_rotation(self, x):
+		y = x.right
 		x.right = y.left
-		x.right.parent = x
+		if y.left:  # only set parent if y.left is not None
+			y.left.parent = x
 		y.left = x
+		# Reconnect y to x's parent
 		y.parent = x.parent
-		y.parent.left = y
-		y.parent.right = y
+		if x.parent:
+			if x.parent.left == x:
+				x.parent.left = y
+			else:
+				x.parent.right = y
 		x.parent = y
+		# Return the new root of this subtree
 		return y
 
-
-"""deletes node from the dictionary
+	"""deletes node from the dictionary
 
 	@type node: AVLNode
 	@pre: node is a real pointer to a node in self
@@ -378,13 +331,12 @@ class AVLTree(object):
 	@returns: the number of nodes which have balance factor equals to 0 devided by the total number of nodes
 	"""
 	def get_amir_balance_factor(self):
-		count_bf_zero = 0
-		if self.get_balance_factor() == 0:
-			count_bf_zero = count_bf_zero + 1  # TODO
+		# count_bf_zero = 0
+		# if self.get_balance_factor() == 0:
+		# 	count_bf_zero = count_bf_zero + 1  # TODO
 		return None
 
-	def get_balance_factor(self) -> int:
-		left_height = self.root.left.height if self.left else -1
-		right_height = self.root.right.height if self.right else -1
+	def get_balance_factor(self, node) -> int:
+		left_height = node.left.height if node.left else -1
+		right_height = node.right.height if node.right else -1
 		return left_height - right_height
-
