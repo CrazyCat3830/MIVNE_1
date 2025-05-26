@@ -48,6 +48,7 @@ class AVLTree(object):
 	"""
 	def __init__(self):
 		self.root = None
+		self.max = self.root
 		self.size = 0
 
 	"""searches for a node in the dictionary corresponding to the key
@@ -82,35 +83,17 @@ class AVLTree(object):
 	"""
 	def insert(self, key, val, start="root"):
 		count = 0
+		# if the key already exists in the tree, do nothing
 		if self.search(val) is not None:
 			return count
+		temp = None
 		parent = None
+		# if the key doesn't exist already, insert it in the desired way
 		if start == "root":
-			# search
-			temp = self.root
-			while temp is not None:
-				if temp.key < key:
-					temp = temp.right
-				else:
-					temp = temp.left
-			# insert
-			temp, parent = self.add_new_node(temp, key, val)
-
-		if start == "max":
-			pass
-
-		temp_height = temp
-		height_counter = 0
-		#compute height and bf for every parent above the inserted node
-		while temp_height is not None:
-			height_counter += 1
-			temp_height.height = max(temp_height.height, height_counter)
-			temp_height.bf = temp_height.left.height - temp_height.right.height
-			temp_height = temp_height.parent
-
-
-
-
+			temp, parent = self.root_insert(key, val)
+		elif start == "max":
+			temp, parent = self.max_insert(key, val)
+		# fix the avl tree
 		#if the parent of the parent is real, and his bf is2 or -2, rotate!
 		#if there's no parent of parent, don't worry it's cool
 		if parent.parent != None:
@@ -200,7 +183,6 @@ class AVLTree(object):
 
 		return count
 
-
 	def add_new_node(self, temp, key, val):
 		parent = temp.parent
 		new_node = AVLNode(key, val)
@@ -213,6 +195,43 @@ class AVLTree(object):
 		new_node.right = AVLNode(None, None)
 		return (new_node, parent)
 
+	def fix_height_and_rebalance(self, node):
+		temp = node
+		while temp is not None:
+			left_height = temp.left.height if temp.left else -1
+			right_height = temp.right.height if temp.right else -1
+			# fix height
+			temp.height = 1 + max(left_height, right_height)
+			# fix bf
+			temp.bf = left_height - right_height
+			temp = temp.parent
+
+	def root_insert(self, key, val):
+		# search
+		temp = self.root
+		while temp.is_real_node():
+			if temp.key < key:
+				temp = temp.right
+			else:
+				temp = temp.left
+		# insert
+		temp, parent = self.add_new_node(temp, key, val)
+		# fix fields
+		temp.height = 0
+		self.fix_height_and_rebalance(temp)
+		return temp, parent  # returns the new node and the parent
+
+	def max_insert(self, key, val):
+		# seach
+		temp = self. max
+		while temp.is_real_node():
+			pass
+		# insert
+		temp, parent = self.add_new_node(temp, key, val)
+		# fix fields
+		temp.height = 0
+		self.fix_height_and_rebalance(temp)
+		return temp, parent
 	"""deletes node from the dictionary
 
 	@type node: AVLNode
