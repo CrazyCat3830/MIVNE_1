@@ -24,7 +24,6 @@ class AVLNode(object):
 		self.right = None
 		self.parent = None
 		self.height = -1
-		self.bf = 0
 
 	"""returns whether self is not a virtual node 
 
@@ -35,10 +34,10 @@ class AVLNode(object):
 		return not self.height == -1
 
 
-
 """
 A class implementing an AVL tree.
 """
+
 
 class AVLTree(object):
 
@@ -69,7 +68,6 @@ class AVLTree(object):
 				temp = temp.left
 		return None
 
-
 	"""inserts a new node into the dictionary with corresponding key and value
 
 	@type key: int
@@ -83,9 +81,20 @@ class AVLTree(object):
 	"""
 	def insert(self, key, val, start="root"):
 		count = 0
+		# if tree is empty
+		if self.root is None:
+			self.root = AVLNode(key, val)
+			self.root.height = 0
+			left_child = AVLNode(None, None)
+			right_child = AVLNode(None, None)
+			left_child.parent = self.root
+			right_child.parent = self.root
+			self.root.left = left_child
+			self.root.right = right_child
+			return 0
 		# if the key already exists in the tree, do nothing
 		if self.search(val) is not None:
-			return count
+			return 0
 		temp = None
 		parent = None
 		# if the key doesn't exist already, insert it in the desired way
@@ -191,19 +200,24 @@ class AVLTree(object):
 		else:
 			parent.right = new_node
 		new_node.parent = parent
-		new_node.left = AVLNode(None, None)
-		new_node.right = AVLNode(None, None)
-		return (new_node, parent)
+		new_node_left = AVLNode(None, None)
+		new_node_right = AVLNode(None, None)
+		new_node.left = new_node_left
+		new_node.right = new_node_right
+		# children need their parent
+		new_node_left.parent = new_node
+		new_node_right.parent = new_node
+		# fix fields
+		self.fix_height(temp)
+		return new_node, parent
 
-	def fix_height_and_rebalance(self, node):
+	def fix_height(self, node):
 		temp = node
 		while temp is not None:
 			left_height = temp.left.height if temp.left else -1
 			right_height = temp.right.height if temp.right else -1
 			# fix height
 			temp.height = 1 + max(left_height, right_height)
-			# fix bf
-			temp.bf = left_height - right_height
 			temp = temp.parent
 
 	def root_insert(self, key, val):
@@ -216,9 +230,6 @@ class AVLTree(object):
 				temp = temp.left
 		# insert
 		temp, parent = self.add_new_node(temp, key, val)
-		# fix fields
-		temp.height = 0
-		self.fix_height_and_rebalance(temp)
 		return temp, parent  # returns the new node and the parent
 
 	def max_insert(self, key, val):
@@ -228,10 +239,14 @@ class AVLTree(object):
 			pass
 		# insert
 		temp, parent = self.add_new_node(temp, key, val)
-		# fix fields
-		temp.height = 0
-		self.fix_height_and_rebalance(temp)
 		return temp, parent
+
+	def right_rotation(self, x, y):
+		pass
+
+	def left_rotation(self, x, y):
+		pass
+	
 	"""deletes node from the dictionary
 
 	@type node: AVLNode
@@ -352,7 +367,7 @@ class AVLTree(object):
 		return None
 
 	def get_balance_factor(self) -> int:
-		left_height = self.root.left.height if self.left else 0
-		right_height = self.root.right.height if self.right else 0
+		left_height = self.root.left.height if self.left else -1
+		right_height = self.root.right.height if self.right else -1
 		return left_height - right_height
 
