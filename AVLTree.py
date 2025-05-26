@@ -190,7 +190,7 @@ class AVLTree(object):
 			else:
 				node.parent.left = succ
 			succ.parent = node.parent
-			# 
+			#
 			succ.left = node.left
 			node.left.parent = succ
 			succ.right = node.right
