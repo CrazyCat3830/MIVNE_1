@@ -241,13 +241,30 @@ class AVLTree(object):
 		temp, parent = self.add_new_node(temp, key, val)
 		return temp, parent
 
+	#x is the bf criminal, y is the root replacement. returns the new root of the changed suntree
 	def right_rotation(self, x, y):
-		pass
+		x.left = y.right
+		x.left.parent = x
+		y.right = x
+		y.parent = x.parent
+		y.parent.left = y
+		y.parent.right = y
+		x.parent = y
+		return y
 
+	#x is the bf criminal, y is the root replacement
 	def left_rotation(self, x, y):
-		pass
-	
-	"""deletes node from the dictionary
+		x.right = y.left
+		x.right.parent = x
+		y.left = x
+		y.parent = x.parent
+		y.parent.left = y
+		y.parent.right = y
+		x.parent = y
+		return y
+
+
+"""deletes node from the dictionary
 
 	@type node: AVLNode
 	@pre: node is a real pointer to a node in self
