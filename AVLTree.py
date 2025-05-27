@@ -132,20 +132,18 @@ class AVLTree(object):
 	def add_new_node(self, temp, key, val):
 		parent = temp.parent
 		new_node = AVLNode(key, val)
-		if parent.key > key:
+		if parent.left == temp:
 			parent.left = new_node
 		else:
 			parent.right = new_node
 		new_node.parent = parent
-		new_node_left = AVLNode(None, None)
-		new_node_right = AVLNode(None, None)
-		new_node.left = new_node_left
-		new_node.right = new_node_right
-		# children need their parent
-		new_node_left.parent = new_node
-		new_node_right.parent = new_node
-		# fix fields
-		self.fix_height(temp)
+		# Add virtual children
+		new_node.left = AVLNode(None, None)
+		new_node.right = AVLNode(None, None)
+		new_node.left.parent = new_node
+		new_node.right.parent = new_node
+		# Fix heights from new node upward
+		self.fix_height(new_node)
 		return new_node, parent
 
 	def fix_height(self, node):
@@ -215,6 +213,8 @@ class AVLTree(object):
 				x.parent.right = y
 		x.parent = y
 		# Return the new root of this subtree
+		self.fix_height(x)
+		self.fix_height(y)
 		return y
 
 	"""deletes node from the dictionary
@@ -340,3 +340,16 @@ class AVLTree(object):
 		left_height = node.left.height if node.left else -1
 		right_height = node.right.height if node.right else -1
 		return left_height - right_height
+
+	"""
+	DEBUG FUNCTIONS
+	"""
+
+	def print_tree(self, node=None, level=0):
+		if node is None:
+			node = self.root
+		if not node or not node.is_real_node():
+			return
+		self.print_tree(node.right, level + 1)
+		print("\t" * level + f"{node.key} (h={node.height})")
+		self.print_tree(node.left, level + 1)
