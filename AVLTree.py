@@ -48,7 +48,7 @@ class AVLTree(object):
 	def __init__(self):
 		self.root = None
 		self.max = self.root
-		self.size = 0
+		self._size = 0
 
 	"""searches for a node in the dictionary corresponding to the key
 
@@ -85,7 +85,7 @@ class AVLTree(object):
 		# if the key already exists in the tree, do nothing
 		if self.search(key) is not None:
 			return 0
-		self.size = self.size + 1
+		self._size = self._size + 1
 		# if tree is empty
 		if self.root is None:
 			self.root = AVLNode(key, val)
@@ -225,7 +225,10 @@ class AVLTree(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def delete(self, node):
-		#self.size -= 1
+		# if the key doesn't exist in the tree, do nothing
+		if self.search(node.key) is None:
+			return 0
+		self._size = self._size - 1
 		return -1
 
 	def BST_delete(self, node):
@@ -306,7 +309,18 @@ class AVLTree(object):
 	@returns: a sorted list according to key of touples (key, value) representing the data structure
 	"""
 	def avl_to_array(self):
-		return None
+		lst = []
+		self.helper_avl_to_arr(self.root, lst)
+		return lst
+
+	def helper_avl_to_arr(self, node: AVLNode, lst: list):
+		if node is None or not node.is_real_node():
+			return
+		if node.left.is_real_node():
+			self.helper_avl_to_arr(node.left, lst)
+		lst.append((node.key, node.value))
+		if node.right.is_real_node():
+			self.helper_avl_to_arr(node.right, lst)
 
 	"""returns the number of items in dictionary 
 
@@ -314,7 +328,7 @@ class AVLTree(object):
 	@returns: the number of items in dictionary 
 	"""
 	def size(self):
-		return self.size
+		return self._size
 
 	"""returns the root of the tree representing the dictionary
 
