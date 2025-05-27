@@ -49,6 +49,7 @@ class AVLTree(object):
 		self.root = None
 		self.max = self.root
 		self._size = 0
+		self._amir_bf_counter = 0
 
 	"""searches for a node in the dictionary corresponding to the key
 
@@ -85,6 +86,7 @@ class AVLTree(object):
 		# if the key already exists in the tree, do nothing
 		if self.search(key) is not None:
 			return 0
+		# after making sure we insert a new node, update size
 		self._size = self._size + 1
 		# if tree is empty
 		if self.root is None:
@@ -101,7 +103,7 @@ class AVLTree(object):
 		parent = None
 		# if the key doesn't exist already, insert it in the desired way
 		if start == "root":
-			temp, parent = self.root_insert(key, val)
+			temp, parent = self.insert_from(key, val, self.root)
 		elif start == "max":
 			temp, parent = self.max_insert(key, val)
 		# fix the avl tree
@@ -155,9 +157,9 @@ class AVLTree(object):
 			temp.height = 1 + max(left_height, right_height)
 			temp = temp.parent
 
-	def root_insert(self, key, val):
+	def insert_from(self, key, val, node):
 		# search
-		temp = self.root
+		temp = node
 		while temp.is_real_node():
 			if temp.key < key:
 				temp = temp.right
@@ -168,13 +170,12 @@ class AVLTree(object):
 		return temp, parent  # returns the new node and the parent
 
 	def max_insert(self, key, val):
-		# seach
-		temp = self. max
-		while temp.is_real_node():
-			pass  # TODO
-		# insert
-		temp, parent = self.add_new_node(temp, key, val)
-		return temp, parent
+		temp = self.max
+		if temp == self.root or key < self.root.key:
+			return self.insert_from(key, val, self.root)
+		while not (temp.key > key and temp.parent.key < key):
+			temp = temp.parent
+		return self.insert_from(key, val, temp)
 
 	# x is the unbalanced node (bf = +2), y is the new root of the rotated subtree
 	def right_rotation(self, x):
@@ -228,8 +229,46 @@ class AVLTree(object):
 		# if the key doesn't exist in the tree, do nothing
 		if self.search(node.key) is None:
 			return 0
+		if self._size == 1:
+			self.root = None
+			return 0
+		parent = None
+		if node.left.is_real_node() and node.right.is_real_node():
+			succ = self.successor(node)
+			parent = succ.parent if succ.parent != node else succ
+		else:
+			parent = node.parent
+		self.BST_delete(node)
 		self._size = self._size - 1
-		return -1
+		# fix AVL tree
+		old_height = parent.height
+		counter = 0
+		while parent is not None:
+			bf = self.get_balance_factor(parent)
+			child = parent.left if bf > 0 else parent.right
+			child_bf = self.get_balance_factor(child)
+			if -2 < bf < 2:
+				if parent.height == old_height:
+					return counter
+				else:
+					parent = parent.parent
+			elif bf == 2:
+				if child_bf >= 0:
+					self.right_rotation(parent)     # LL case
+					counter = counter + 1
+				else:
+					parent.left = self.left_rotation(child)  # LR step 1
+					self.right_rotation(parent)       # LR step 2
+					counter = counter + 2
+			else:  # bf == -2
+				if child_bf <= 0:
+					self.left_rotation(parent)      # RR case
+					counter = counter + 1
+				else:
+					parent.right = self.right_rotation(child)  # RL step 1
+					self.left_rotation(parent)          # RL step 2
+					counter = counter + 2
+		return counter
 
 	def BST_delete(self, node):
 		is_right_son = False
@@ -345,10 +384,19 @@ class AVLTree(object):
 	@returns: the number of nodes which have balance factor equals to 0 devided by the total number of nodes
 	"""
 	def get_amir_balance_factor(self):
-		# count_bf_zero = 0
-		# if self.get_balance_factor() == 0:
-		# 	count_bf_zero = count_bf_zero + 1  # TODO
-		return None
+		if self._size == 0:
+			return 0
+		return self._amir_bf_counter / self._size
+
+	def helper_count_bf_zero(self, node):
+		counter = 0
+		if node.left.is_real_node():
+			counter = counter + self.helper_count_bf_zero(node.left)
+		if self.get_balance_factor(node) == 0:
+			counter = counter + 1
+		if node.right.is_real_node():
+			counter = counter + self.helper_count_bf_zero(node.right)
+		return counter
 
 	def get_balance_factor(self, node) -> int:
 		left_height = node.left.height if node.left else -1

@@ -68,5 +68,6 @@ class SimpleAVLTester(unittest.TestCase):
         self.tree.insert(5, "five")
         self.assertEqual(self.tree.get_amir_balance_factor(), 1.0, "FAIL - Amir's balance factor should be 1.0 for a balanced tree")
 
+
 if __name__ == '__main__':
     unittest.main()
