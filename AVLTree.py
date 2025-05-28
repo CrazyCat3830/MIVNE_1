@@ -108,6 +108,7 @@ class AVLTree(object):
 			temp, parent = self.max_insert(key, val)
 		# fix the avl tree
 		child = None
+		counter = 0
 		while temp is not None:
 			bf = self.get_balance_factor(temp)
 			child = temp.left if bf > 0 else temp.right
@@ -115,21 +116,21 @@ class AVLTree(object):
 			if bf == 2:
 				if child_bf >= 0:
 					self.right_rotation(temp)     # LL case
-					return 1
+					return 2
 				else:
 					temp.left = self.left_rotation(child)  # LR step 1
 					self.right_rotation(temp)       # LR step 2
-					return 2
+					return 3
 			elif bf == -2:
 				if child_bf <= 0:
 					self.left_rotation(temp)      # RR case
-					return 1
+					return 2
 				else:
 					temp.right = self.right_rotation(child)  # RL step 1
 					self.left_rotation(temp)          # RL step 2
-					return 2
+					return 3
 			temp = temp.parent
-		return 0
+		return 1
 
 	def add_new_node(self, temp, key, val):
 		parent = temp.parent
