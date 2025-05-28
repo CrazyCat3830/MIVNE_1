@@ -21,25 +21,25 @@ class TestInsertDeleteReturnValues(unittest.TestCase):
         tree.insert(10, "root")
         self.assertEqual(tree.insert(5, "leaf"), 1)                 # 1 height update, no rotations
 
-    def test_insert_rr_single_rotation(self):  # bad
+    def test_insert_rr_single_rotation(self):  # pass
         tree = AVLTree()
         tree.insert(10, "a")  # 0
         self.assertEqual(tree.insert(20, "b"), 1)                                # 1
         self.assertEqual(tree.insert(30, "c"), 2)                    # 1 height + 1 L-rotation
 
-    def test_insert_ll_single_rotation(self):
+    def test_insert_ll_single_rotation(self):  # pass
         tree = AVLTree()
         tree.insert(20, "a")
         tree.insert(10, "b")
         self.assertEqual(tree.insert(5, "c"), 2)                     # 1 height + 1 R-rotation
 
-    def test_insert_lr_double_rotation(self):
+    def test_insert_lr_double_rotation(self):  # pass
         tree = AVLTree()
         tree.insert(30, "a")
         tree.insert(10, "b")
         self.assertEqual(tree.insert(20, "c"), 3)                    # 1 height + 2 rotations (LR)
 
-    def test_insert_rl_double_rotation(self):
+    def test_insert_rl_double_rotation(self):  # pass
         tree = AVLTree()
         tree.insert(10, "a")
         tree.insert(30, "b")
@@ -52,6 +52,7 @@ class TestInsertDeleteReturnValues(unittest.TestCase):
         tree.insert(5, "leaf")
         node = tree.search(5)
         self.assertEqual(tree.delete(node), 1)                       # root height shrinks by 1
+        tree.print_tree()
 
     def test_delete_root_leaf(self):
         tree = AVLTree()

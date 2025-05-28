@@ -203,7 +203,7 @@ class AVLTree(object):
 	def left_rotation(self, x):
 		y = x.right
 		x.right = y.left
-		if y.left:  # only set parent if y.left is not None
+		if y.left:
 			y.left.parent = x
 		y.left = x
 		# Reconnect y to x's parent
@@ -213,11 +213,15 @@ class AVLTree(object):
 				x.parent.left = y
 			else:
 				x.parent.right = y
+		else:  # update root if x was the root
+			self.root = y
+
 		x.parent = y
-		# Return the new root of this subtree
+		# Fix heights from bottom up
 		self.fix_height(x)
 		self.fix_height(y)
 		return y
+
 
 	"""deletes node from the dictionary
 
