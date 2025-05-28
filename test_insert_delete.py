@@ -12,19 +12,19 @@ class TestInsertDeleteReturnValues(unittest.TestCase):
     """
 
     # ---------- INSERT -----------------------------------------------------------------
-    def test_insert_root_returns_zero(self):
+    def test_insert_root_returns_zero(self):  # pass
         tree = AVLTree()
         self.assertEqual(tree.insert(10, "root"), 0)
 
-    def test_insert_child_height_update(self):
+    def test_insert_child_height_update(self):  # pass
         tree = AVLTree()
         tree.insert(10, "root")
         self.assertEqual(tree.insert(5, "leaf"), 1)                 # 1 height update, no rotations
 
-    def test_insert_rr_single_rotation(self):
+    def test_insert_rr_single_rotation(self):  # bad
         tree = AVLTree()
-        tree.insert(10, "a")                                         # 0
-        self.assertEqual(tree.insert(20, "b"),1)                                # 1
+        tree.insert(10, "a")  # 0
+        self.assertEqual(tree.insert(20, "b"), 1)                                # 1
         self.assertEqual(tree.insert(30, "c"), 2)                    # 1 height + 1 L-rotation
 
     def test_insert_ll_single_rotation(self):
